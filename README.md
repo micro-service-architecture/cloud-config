@@ -116,6 +116,32 @@ gateway:
 
 ![image](https://user-images.githubusercontent.com/31242766/195384213-3777f1ec-1cbb-4439-8171-3901737c0865.png)
 
+### Multiple environments
+DEV-QA-PROD 환경에 맞는 구성 정보 사용이 가능하다.
+
+![image](https://user-images.githubusercontent.com/31242766/195982432-4272b1c3-45f4-4f90-87f1-cea5c800d3d9.png)
+
+git-local-repo 폴더에 파일을 추가하고 각 JWT 토큰을 다르게 수정해보자.
+
+![image](https://user-images.githubusercontent.com/31242766/195982669-1b16b9eb-02f2-4caf-a93d-40c29bd7e750.png)
+
+`gateway` 와 `마이크로서비스` 에 `bootstrap.yml` 에 profiles 를 추가해보자.
+```yml
+spring:
+  ...
+  profiles:
+    active: dev
+```
+![image](https://user-images.githubusercontent.com/31242766/195983083-a25d1b76-2641-4f31-a6ab-abf4853faab8.png)
+
+```yml
+spring:
+  ...
+  profiles:
+    active: prod
+```
+![image](https://user-images.githubusercontent.com/31242766/195983194-74e13903-2a03-4f6f-98d2-13784b611c05.png)
+
 ### Spring Cloud Bus
 JWT 토큰 정보를 변경하고나서 `localhost:8000/user-service/actuator/refresh` 를 통해 `user-serivce` 에 변경된 정보를 반영해보자. 해당 `user-service` 에 변경된 토큰 정보가 반영된다. 그런데 `gateway` 는 refresh 하지 않았다면? `gateway` 에 변경된 토큰 정보가 반영되지 않는다. 그래서 `localhost:8000/actuator/refresh` 를 통해 `gateway` 또한 변경된 정보를 반영해야한다. 여기서, 비효율적인 문제가 발생한다. config 정보를 변경할 때마다 `마이크로서비스` 및 `gateway` 에 `/actuator/refresh` 를 통해 변경된 정보를 반영해주어야 하기 때문이다. 이러한 비효율적인 문제를 해소하고자 `Spring Cloud Bus` 가 등장했다.
 
