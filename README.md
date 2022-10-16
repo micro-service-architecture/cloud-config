@@ -143,7 +143,17 @@ spring:
 ![image](https://user-images.githubusercontent.com/31242766/195983194-74e13903-2a03-4f6f-98d2-13784b611c05.png)
 
 ### Git Remote Repository
-
+원격 저장소에 있는 정보를 가져온다.
+```yml
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/multi-module-project/cloud-config-repo
+```
 
 ### Spring Cloud Bus
 JWT 토큰 정보를 변경하고나서 `localhost:8000/user-service/actuator/refresh` 를 통해 `user-serivce` 에 변경된 정보를 반영해보자. 해당 `user-service` 에 변경된 토큰 정보가 반영된다. 그런데 `gateway` 는 refresh 하지 않았다면? `gateway` 에 변경된 토큰 정보가 반영되지 않는다. 그래서 `localhost:8000/actuator/refresh` 를 통해 `gateway` 또한 변경된 정보를 반영해야한다. 여기서, 비효율적인 문제가 발생한다. config 정보를 변경할 때마다 `마이크로서비스` 및 `gateway` 에 `/actuator/refresh` 를 통해 변경된 정보를 반영해주어야 하기 때문이다. 이러한 비효율적인 문제를 해소하고자 `Spring Cloud Bus` 가 등장했다.
