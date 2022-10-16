@@ -11,5 +11,6 @@ spring:
       server:
         git:
           uri: https://github.com/multi-module-project/cloud-config-repo
-#        native:
-#          search-locations: file:C:/git-local-repo
+          default-label: master
+        native:
+          search-locations: file:C:/git-local-repo
