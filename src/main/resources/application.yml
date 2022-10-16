@@ -4,10 +4,12 @@ server:
 spring:
   application:
     name: config-service
-  profiles:
-    active: native
+#  profiles:
+#    active: native
   cloud:
     config:
       server:
-        native:
-          search-locations: file:C:/git-local-repo
+        git:
+          uri: https://github.com/multi-module-project/cloud-config-repo
+#        native:
+#          search-locations: file:C:/git-local-repo
