@@ -216,7 +216,7 @@ Spring Cloud Bus 에 연결되어 있는 각각의 마이크로서비스에 변�
 It's Working in User Service, port(local.server.port)=52031, port(server.port)=0, token secret=comCloudServiceBootUserServiceSecretKeyAuthorizationJwtManageTokenNative, token expiration time=86400000
 ```
 
-해당 상태에서 `config-server` 의 설정 정보를 수정 후 확인해보자. 현재 `config-server` 의 `application.yml` 정보에서 로컬에서 설정 정보를 가져올 것이다.
+해당 상태에서 `config-server` 의 설정 정보를 수정 후 확인해보자. 현재 `config-server` 의 `application.yml` 기본 정보이며 로컬에서 설정 정보를 가져올 것이다.
 ```yml
 server:
   port: 8888
