@@ -204,6 +204,65 @@ Spring Cloud Bus 에 연결되어 있는 각각의 마이크로서비스에 변�
 
 * 참고 : `/busrefresh` 를 호출할 때 Spring Cloud Bus 에 연결되어 있는 마이크로서비스를 호출하면 된다. Cloud Bus 는 변경 사항을 감지하게 되고 Cloud Bus 와 연결되어 있는 다른 마이크로서비스에 변경 사항을 전달하게 된다. `Config Server`, `Gateway` 어디에서든지 `/busrefresh` 를 호출하게 되면 Cloud Bus 와 연결되어 있는 곳에 변경 사항을 전달하게 된다.
 
+#### Spring Cloud Bus 테스트
+구동중인 서버는 아래와 같다.
+- [config-server](https://github.com/multi-module-project/cloud-config)
+- [discovery-server](https://github.com/multi-module-project/cloud-system/tree/master/discovery)
+- [gateway-server](https://github.com/multi-module-project/cloud-system/tree/master/gateway)
+- [user-server](https://github.com/multi-module-project/cloud-service/tree/master/boot-user-service)
+
+`user-server` 를 통해 회원가입 및 로그인 절차를 통해서 `/health_check` 한 결과 정보이다.
+```console
+It's Working in User Service, port(local.server.port)=52031, port(server.port)=0, token secret=comCloudServiceBootUserServiceSecretKeyAuthorizationJwtManageTokenNative, token expiration time=86400000
+```
+
+해당 상태에서 `config-server` 의 설정 정보를 수정 후 확인해보자. 현재 `config-server` 의 `application.yml` 정보에서 로컬에서 설정 정보를 가져올 것이다.
+```yml
+server:
+  port: 8888
+spring:
+  application:
+    name: config-service
+    ...
+  profiles:
+    active: native
+```
+```yml
+// http://localhost:8888/config-server/default
+
+{
+  "name": "config-server",
+  "profiles": [
+    "default"
+  ],
+  "label": null,
+  "version": null,
+  "state": null,
+  "propertySources": [
+    {
+      "name": "file:C:\\git-local-repo\\application.yml",
+      "source": {
+        "token.expiration_time": 86400000,
+        "token.secret": "comCloudServiceBootUserServiceSecretKeyAuthorizationJwtManageTokenNativeChanged",
+        "gateway.ip": "59.29.153.172"
+      }
+    }
+  ]
+}
+```
+`token.secret` comCloudServiceBootUserServiceSecretKeyAuthorizationJwtManageTokenNative -> comCloudServiceBootUserServiceSecretKeyAuthorizationJwtManageTokenNativeChanged    
+로 수정한 상태이다.
+
+이 상태로 `user-server` 의 상태만 갱신해보자. 갱신 후에는 `user-server` 의 정보가 갱신된 것을 알 수 있다.
+
+![image](https://user-images.githubusercontent.com/31242766/196255139-4e2c8bd3-6a73-4511-a4ea-1629357eceed.png)
+
+![image](https://user-images.githubusercontent.com/31242766/196255350-9e5b5043-817d-44da-bc56-14c758d47ff3.png)
+
+또한, `bus-refresh` 를 통해서 연결되어 있는 `gateway-server` 의 정보도 갱신된 것을 알 수 있다.
+
+![image](https://user-images.githubusercontent.com/31242766/196255774-97e3a8bf-ee77-4476-a3e8-1d6066f5dc0c.png)
+
 ## 참고
 http://forward.nhnent.com/hands-on-labs/java.spring-boot-actuator/04-endpoint.html      
 https://junjangsee.tistory.com/entry/springboot-actuator
