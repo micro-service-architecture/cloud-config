@@ -175,8 +175,19 @@ spring:
 ### Spring Cloud Bus
 JWT 토큰 정보를 변경하고나서 `localhost:8000/user-service/actuator/refresh` 를 통해 `user-serivce` 에 변경된 정보를 반영해보자. 해당 `user-service` 에 변경된 토큰 정보가 반영된다. 그런데 `gateway` 는 refresh 하지 않았다면? `gateway` 에 변경된 토큰 정보가 반영되지 않는다. 그래서 `localhost:8000/actuator/refresh` 를 통해 `gateway` 또한 변경된 정보를 반영해야한다. 여기서, 비효율적인 문제가 발생한다. config 정보를 변경할 때마다 `마이크로서비스` 및 `gateway` 에 `/actuator/refresh` 를 통해 변경된 정보를 반영해주어야 하기 때문이다. 이러한 비효율적인 문제를 해소하고자 `Spring Cloud Bus` 가 등장했다.
 
+#### Actuator bus-refresh Endpoint
 - 분산 시스템의 마이크로서비스를 경량 메시지 브로커(`RabbitMQ`) 와 연결
+Spring Cloud Bus 에 연결되어 있는 각각의 마이크로서비스에 변경된 정보를 알려줄 때 `AMQP(Advanced Message Queuing Protocol)` 방식으로 전달해준다.
+
+![image](https://user-images.githubusercontent.com/31242766/196180785-c3a45495-f7d7-4fe8-a72b-789fb7e78e11.png)
+
 - 상태 및 구성에 대한 변경 사항을 연결된 마이크로서비스에게 전달
+
+![tempsnip](https://user-images.githubusercontent.com/31242766/196176144-c4d0a877-86c1-44f9-a4f5-30e02afb148d.png)
+
+연결되어있는 각각의 마이크로서비스(`USER-SERVICE`, `ORDER-SERVICE`, `CATALOG-SERVICE`)는 외부에서 `/busrefresh` 를 호출하게되면 다른 마이크로서비스에게 변경된 내용을 전달하게 된다.
+
+* 참고 : `/busrefresh` 를 호출할 때 Spring Cloud Bus 에 연결되어 있는 마이크로서비스를 호출하면 된다. Cloud Bus 는 변경 사항을 감지하게 되고 Cloud Bus 와 연결되어 있는 다른 마이크로서비스에 변경 사항을 전달하게 된다. `Config Server`, `Gateway` 어디에서든지 `/busrefresh` 를 호출하게 되면 Cloud Bus 와 연결되어 있는 곳에 변경 사항을 전달하게 된다.
 
 ## 참고
 http://forward.nhnent.com/hands-on-labs/java.spring-boot-actuator/04-endpoint.html      
