@@ -171,6 +171,21 @@ spring:
         native:
           search-locations: file:C:/git-local-repo
 ```
+### config-service 정보 가져오기
+마이크로서비스 `bootstrap.yml` 파일에서 `profiles.active` 설정없이 `spring.cloud.config.name` 을 `config-server` 의 `spring.application.name` 으로 설정하면 `config-server` 의 `application.yml` 파일의 정보를 가져온다.
+```yml
+spring:
+  cloud:
+    config:
+      uri: http://127.0.0.1:8888
+#      name: ecommerce
+      name: config-service
+#  profiles:
+#    active: prod
+```
+
+![image](https://user-images.githubusercontent.com/31242766/196247674-b2328d66-39cb-49de-acff-4db39761d89a.png)
+
 
 ### Spring Cloud Bus
 JWT 토큰 정보를 변경하고나서 `localhost:8000/user-service/actuator/refresh` 를 통해 `user-serivce` 에 변경된 정보를 반영해보자. 해당 `user-service` 에 변경된 토큰 정보가 반영된다. 그런데 `gateway` 는 refresh 하지 않았다면? `gateway` 에 변경된 토큰 정보가 반영되지 않는다. 그래서 `localhost:8000/actuator/refresh` 를 통해 `gateway` 또한 변경된 정보를 반영해야한다. 여기서, 비효율적인 문제가 발생한다. config 정보를 변경할 때마다 `마이크로서비스` 및 `gateway` 에 `/actuator/refresh` 를 통해 변경된 정보를 반영해주어야 하기 때문이다. 이러한 비효율적인 문제를 해소하고자 `Spring Cloud Bus` 가 등장했다.
