@@ -287,7 +287,7 @@ encrypt:
 
 ![image](https://user-images.githubusercontent.com/31242766/196434172-6008a71d-9b3b-4d0f-a518-f24381b1052d.png)
 
-다음으로, `user-server` 에 설정되어 있던 datasource 정보를 `config-server` 로 옮기고 `user-server` 의 `bootstrap.yml` 에 암호화된 정보를 복호화해서 가져올 것이다.
+다음으로, `user-server` 에 설정되어 있던 datasource 정보를 `config-server` 로 옮기고 `user-server` 의 `bootstrap.yml` 으로 설정된 암호화 정보를 복호화해서 가져올 것이다.
 ```yml
 # application.yml
 spring:
@@ -339,6 +339,48 @@ spring:
     password: '{cipher}631d72a0b0a8ef85b69b7f4657c454b7385d0c8824959eef9e5caa90f3657e93'
     ...
 ```
+
+`config-server` 를 실행 후 결과를 확인해보면, 데이터소스 비밀번호가 복호화되서 나오는 것을 확인할 수 있다.
+```json
+// 20221019073955
+// http://localhost:8888/user-service/default
+
+{
+  "name": "user-service",
+  "profiles": [
+    "default"
+  ],
+  "label": null,
+  "version": null,
+  "state": null,
+  "propertySources": [
+    {
+      "name": "file:C:\\git-local-repo\\user-service.yml",
+      "source": {
+        "spring.datasource.driver-class-name": "org.h2.Driver",
+        "spring.datasource.url": "jdbc:h2:mem:testdb",
+        "spring.datasource.username": "sa",
+        "token.expiration_time": 86400000,
+        "token.secret": "comCloudServiceBootUserServiceSecretKeyAuthorizationJwtManageTokenNativeChanged",
+        "gateway.ip": "59.29.153.172",
+        "spring.datasource.password": "1234"
+      }
+    },
+    {
+      "name": "file:C:\\git-local-repo\\application.yml",
+      "source": {
+        "token.expiration_time": 86400000,
+        "token.secret": "comCloudServiceBootUserServiceSecretKeyAuthorizationJwtManageTokenNativeChanged",
+        "gateway.ip": "59.29.153.172"
+      }
+    }
+  ]
+}
+```
+
+그렇다면, `user-server` 를 실행시킨 후에 `h2-console` 로그인이 가능한 것을 확인해보자. 비밀번호 `1234` 를 입력 후에 `Test Connection` 을 해보면 성공했다는 것을 알 수 있다.
+
+![image](https://user-images.githubusercontent.com/31242766/196558950-d4f9ec12-b7be-4241-b984-27eb7939aa98.png)
 
 ## 참고
 http://forward.nhnent.com/hands-on-labs/java.spring-boot-actuator/04-endpoint.html      
