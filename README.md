@@ -382,6 +382,8 @@ spring:
 
 ![image](https://user-images.githubusercontent.com/31242766/196558950-d4f9ec12-b7be-4241-b984-27eb7939aa98.png)
 
+### 대칭 키 암호화 방식
+
 ## 참고
 http://forward.nhnent.com/hands-on-labs/java.spring-boot-actuator/04-endpoint.html      
 https://junjangsee.tistory.com/entry/springboot-actuator
