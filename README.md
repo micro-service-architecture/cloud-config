@@ -263,6 +263,83 @@ spring:
 
 ![image](https://user-images.githubusercontent.com/31242766/196255774-97e3a8bf-ee77-4476-a3e8-1d6066f5dc0c.png)
 
+## 설정 정보의 암호화 처리
+config 설정 정보(`application.yml`, `ootstrap.yml`) 에 노출되면 위험한 정보들이 존재한다. 이러한 정보들을 암호화 처리하여 노출되지 않도록 처리한다.
+- 대칭 키 암호화 방식(Symmetric Encryption)      
+암호화와 복호화할 때 같은 키 값을 사용하는 방식이다.
+- 비대칭 키 암호화 방식(Asymmetric Encryption)     
+암호화할 때 사용하는 키와 복호화할 때 사용하는 키를 달리 해서 사용하는 방식이다.
+
+![image](https://user-images.githubusercontent.com/31242766/196425328-1aa18760-d541-461a-bfae-4b40b061c9bf.png)
+
+### 대칭 키 암호화 방식
+- [config-server](https://github.com/multi-module-project/cloud-config)
+- [user-server](https://github.com/multi-module-project/cloud-service/tree/master/boot-user-service)
+
+해당 서버를 사용하여 진행할 것이다. 먼저, `config-server` 에 `bootstrap.yml` 파일을 추가하고 암호 키를 추가한다.
+```yml
+encrypt:
+  key: abcdefghijklmnopqrstuvwxyz0123456789
+```
+`config-server` 를 실행시킨 후에 encrypt 및 decrypt 되는 것을 확인할 수 있다. 
+
+![image](https://user-images.githubusercontent.com/31242766/196434116-576daf28-3668-4b7f-8ef6-cf657b5d8063.png)
+
+![image](https://user-images.githubusercontent.com/31242766/196434172-6008a71d-9b3b-4d0f-a518-f24381b1052d.png)
+
+다음으로, `user-server` 에 설정되어 있던 datasource 정보를 `config-server` 로 옮기고 `user-server` 의 `bootstrap.yml` 에 암호화된 정보를 복호화해서 가져올 것이다.
+```yml
+# application.yml
+spring:
+  ...
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+      path: /h2-console
+# datasource:
+#   driver-class-name: org.h2.Driver
+#   url: jdbc:h2:mem:testdb
+#   username: sa
+#   password: 1234
+...
+```
+```yml
+# bootstrap.yml
+spring:
+  cloud:
+    config:
+      uri: http://127.0.0.1:8888
+      name: user-service
+```
+
+![image](https://user-images.githubusercontent.com/31242766/196435593-bd14f48a-76af-40be-9e8c-5e087391db12.png)
+
+```yml
+# user-service.yml
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: 1234 <- 해당 정보를 암호화
+    ...
+```
+
+![image](https://user-images.githubusercontent.com/31242766/196437355-af581fa2-8968-4fd5-861d-eb9dcb14a7df.png)
+
+```yml
+# user-service.yml
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: '{cipher}631d72a0b0a8ef85b69b7f4657c454b7385d0c8824959eef9e5caa90f3657e93'
+    ...
+```
+
 ## 참고
 http://forward.nhnent.com/hands-on-labs/java.spring-boot-actuator/04-endpoint.html      
 https://junjangsee.tistory.com/entry/springboot-actuator
