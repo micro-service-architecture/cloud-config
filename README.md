@@ -383,6 +383,115 @@ spring:
 ![image](https://user-images.githubusercontent.com/31242766/196558950-d4f9ec12-b7be-4241-b984-27eb7939aa98.png)
 
 ### 비대칭 키 암호화 방식
+`keystore` 라는 폴더를 만들었고 해당 폴더에 `java 라이브러리`에서 제공해주는 `keytool` 를 이용하여 키를 생성한다.
+```console
+C:\keystore>keytool -genkeypair <- 키 생성 명령 
+                    -alias apiEncryptionKey <- 키의 별칭 
+                    -keyalg RSA <- 키에서 사용하는 알고리즘
+                    -dname "CN=Kenneth Lee, OU=API Development, O=joneconsulting.co.kr, L=Seoul, C=KR" <- 키 정보
+                    -keypass "1q2w3e4r" <- key 비밀번호
+                    -keystore apiEncryptionKey.jks <- 생성할 파일 이름
+                    -storepass "1q2w3e4r" <- store 비밀번호
+```
+![image](https://user-images.githubusercontent.com/31242766/196693109-b2a73726-8b3b-4750-b9a7-ab20f596fe04.png)
+
+#### 개인 키 정보 확인
+```console
+C:\keystore>keytool -list -keystore apiEncryptionKey.jks -v
+```
+![image](https://user-images.githubusercontent.com/31242766/196694340-26a50f1c-0acf-4c1c-85de-9181d2bda3b3.png)
+
+#### 공개 키 생성하기
+```console
+C:\keystore>keytool -export 
+                    -alias apiEncryptionKey <- 키 별칭
+                    -keystore apiEncryptionKey.jks <- 실제 파일 이름
+                    -rfc <- Request for Comments 의 약자로서 인터넷에서 사용하는 표준 양식
+                    -file trustServer.cer <- 생성할 파일 이름
+```
+![image](https://user-images.githubusercontent.com/31242766/196696275-77b298db-02fc-40ec-b0f4-37d2ecfc3895.png)
+
+`config-server` 에 `bootstrap.yml` 파일에 개인 키를 추가한다.
+```yml
+encrypt:
+#  key: abcdefghijklmnopqrstuvwxyz0123456789 <- 대칭키
+  keystore:
+    location: file:C:/keystore/apiEncryptionKey.jks
+    password: 1q2w3e4r
+    alias: apiEncryptionKey
+```
+`config-server` 를 실행시킨 후에 encrypt 및 decrypt 되는 것을 확인할 수 있다.
+
+![image](https://user-images.githubusercontent.com/31242766/196697450-1eaacc19-d366-421d-85b1-73c470e056ad.png)
+
+![image](https://user-images.githubusercontent.com/31242766/196697618-a41c2c03-1ab4-4c8c-9c07-b20dfd46b588.png)
+
+`user-server` 에 설정되어 있던 datasource 정보를 암호화해보자.
+```yml
+# user-service.yml
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: 1234 <- 해당 정보를 암호화
+    ...
+```
+
+![image](https://user-images.githubusercontent.com/31242766/196698622-13fde244-8505-42ea-a322-1b3b6e6e1236.png)
+
+```yml
+# user-service.yml
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    # password: '{cipher}631d72a0b0a8ef85b69b7f4657c454b7385d0c8824959eef9e5caa90f3657e93'
+    password: '{cipher}AQA4mhTmwhe3U85rn2Aeovb7RZ9z9fwm9C7+QY9Lajya/QBG25RM6Jru/3YnT6c/
+    rP1i5gdCbwJOF9HB3nfZvT8JWUD8PB/YnxrwIaoQE93+KHwGyUoZC7LVNwvvw+8OC2rfuRnxuMSM
+    tXC+NZoOUYIPgxbweTp0btR4KI6P4V9tlBvssK86wdRTmyKUu9vjUf9tZbRhROhI67sumujh5xmqUxga
+    Ay2f8qDLHJ9nsdEInVzHLE3Tl/sIfBWmm3CP6b3JQUXVoprfAttnUkhEu+sHHc8iqY4lKwebuRqsVM3F
+    7+A9b/l9UcNWgEfTxlyHqPDPMXEt+J2QzPQlHmppIccN4LCnXGScAwHVbcaS6HH8JygCtTxjsDUhlbuKeSFmYOw='
+    ...
+```
+`config-server` 를 실행 후 결과를 확인해보면, 데이터소스 비밀번호가 복호화되서 나오는 것을 확인할 수 있다.
+```json
+// 20221019221043
+// http://localhost:8888/user-service/default
+
+{
+  "name": "user-service",
+  "profiles": [
+    "default"
+  ],
+  "label": null,
+  "version": null,
+  "state": null,
+  "propertySources": [
+    {
+      "name": "file:C:\\git-local-repo\\user-service.yml",
+      "source": {
+        "spring.datasource.driver-class-name": "org.h2.Driver",
+        "spring.datasource.url": "jdbc:h2:mem:testdb",
+        "spring.datasource.username": "sa",
+        "token.expiration_time": 86400000,
+        "token.secret": "comCloudServiceBootUserServiceSecretKeyAuthorizationJwtManageTokenNativeChanged",
+        "gateway.ip": "59.29.153.172",
+        "spring.datasource.password": "1234"
+      }
+    },
+    {
+      "name": "file:C:\\git-local-repo\\application.yml",
+      "source": {
+        "token.expiration_time": 86400000,
+        "token.secret": "comCloudServiceBootUserServiceSecretKeyAuthorizationJwtManageTokenNativeChanged",
+        "gateway.ip": "59.29.153.172"
+      }
+    }
+  ]
+}
+```
 
 ## 참고
 http://forward.nhnent.com/hands-on-labs/java.spring-boot-actuator/04-endpoint.html      
