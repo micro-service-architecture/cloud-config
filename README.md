@@ -264,7 +264,7 @@ spring:
 ![image](https://user-images.githubusercontent.com/31242766/196255774-97e3a8bf-ee77-4476-a3e8-1d6066f5dc0c.png)
 
 ## 설정 정보의 암호화 처리
-config 설정 정보(`application.yml`, `ootstrap.yml`) 에 노출되면 위험한 정보들이 존재한다. 이러한 정보들을 암호화 처리하여 노출되지 않도록 처리한다.
+config 설정 정보(`application.yml`, `bootstrap.yml`) 에 노출되면 위험한 정보들이 존재한다. 이러한 정보들을 암호화 처리하여 노출되지 않도록 처리한다.
 - 대칭 키 암호화 방식(Symmetric Encryption)      
 암호화와 복호화할 때 같은 키 값을 사용하는 방식이다.
 - 비대칭 키 암호화 방식(Asymmetric Encryption)     
