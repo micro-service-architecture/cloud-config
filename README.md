@@ -1,6 +1,6 @@
 # cloud-config
 ## 목차
-  * **[변화된 Conifg 설정 정보 값 가져오는 방법](#변화된 Conifg-설정-정보-값-가져오는-방법)**
+  * **[변화된 Conifg 설정 정보 값 가져오는 방법](#변화된-Conifg-설정-정보-값-가져오는-방법)**
     * **[Actuator](#Actuator)**
     * **[Actuator refresh](#Actuator-refresh)**
       * **[git-local-repo 폴더](#git-local-repo-폴더)**
