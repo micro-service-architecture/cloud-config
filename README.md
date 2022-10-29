@@ -15,7 +15,7 @@
     * **[Git Remote Repository](#Git-Remote-Repository)**
     * **[Native File Repository](#Native-File-Repository)**
     * **[config-service 정보 가져오기](#config-service-정보-가져오기)**
-    * **[Spring Cloud Bus](Spring-Cloud-Bus)**
+    * **[Spring Cloud Bus](#Spring-Cloud-Bus)**
       * **[Actuator bus-refresh Endpoint](#Actuator-bus-refresh-Endpoint)**
       * **[Spring Cloud Bus 테스트](#Spring-Cloud-Bus-테스트)**
   * **[설정 정보의 암호화 처리](#설정-정보의-암호화-처리)**
