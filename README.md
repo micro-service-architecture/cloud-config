@@ -1,4 +1,23 @@
 # cloud-config
+## 목차
+  * **[변화된 Conifg 설정 정보 값 가져오는 방법](#변화된 Conifg-설정-정보-값-가져오는-방법)**
+    * **[Actuator](#Actuator)**
+    * **[Actuator refresh](#Actuator-refresh)**
+      * **[git-local-repo 폴더](#git-local-repo-폴더)**
+    * **[Multiple environments](#Multiple-environments)**
+    * **[Git Remote Repository](#Git-Remote-Repository)**
+    * **[Native File Repository](#Native-File-Repository)**
+    * **[config-service 정보 가져오기](#config-service-정보-가져오기)**
+    * **[Spring Cloud Bus](Spring-Cloud-Bus)**
+      * **[Actuator bus-refresh Endpoint](#Actuator-bus-refresh-Endpoint)**
+      * **[Spring Cloud Bus 테스트](#Spring-Cloud-Bus-테스트)**
+  * **[설정 정보의 암호화 처리](#설정-정보의-암호화-처리)**
+    * **[대칭 키 암호화 방식](#대칭-키-암호화-방식)**
+    * **[비대칭 키 암호화 방식](#비대칭-키-암호화-방식)**
+      * **[개인 키 정보 확인](#개인-키-정보-확인)**
+      * **[공개 키 생성하기](#공개-키-생성하기)**
+      
+
 - 분산 시스템에서 서버, 클라이언트 구성에 필요한 설정 정보(`application.yml`) 를 외부 시스템에서 관리한다.
 - 하나의 중앙화 된 저장소에서 구성요소 관리가 가능하다.
 - 각 서비스를 다시 빌드하지 않고 바로 적용 가능하다.
