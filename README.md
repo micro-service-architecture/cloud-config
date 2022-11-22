@@ -23,6 +23,8 @@
     * **[비대칭 키 암호화 방식](#비대칭-키-암호화-방식)**
       * **[개인 키 정보 확인](#개인-키-정보-확인)**
       * **[공개 키 생성하기](#공개-키-생성하기)**
+  * **[애플리케이션 배포 구성](#애플리케이션-배포-구성)**
+    * **[ConfigService 배포](#ConfigService-배포)**
 
 ## 변화된 Conifg 설정 정보 값 가져오는 방법
 - 서버 재기동
@@ -510,6 +512,9 @@ spring:
   ]
 }
 ```
+
+## 애플리케이션 배포 구성
+### ConfigService 배포
 
 ## 참고
 http://forward.nhnent.com/hands-on-labs/java.spring-boot-actuator/04-endpoint.html      
