@@ -515,6 +515,33 @@ spring:
 
 ## 애플리케이션 배포 구성
 ### ConfigService 배포
+#### Dockerfile 생성
+```docker
+FROM openjdk:17-ea-11-jdk-slim
+VOLUME /tmp
+COPY apiEncryptionKey.jks apiEncryptionKey.jks
+COPY build/libs/cloud-config-0.0.1-SNAPSHOT.jar ConfigServer.jar
+ENTRYPOINT ["java", "-jar", "ConfigServer.jar"]
+```
+#### 도커 파일 빌드
+```docker
+docker build -t yong7317/config-service:1.0 .
+```
+#### 도커 파일 실행
+```docker
+docker run -d -p 8888:8888 --network ecommerce-network 
+ -e "spring.rabbitmq.host="컨테이너이름"
+ -e "spring.profiles.active=default"
+ --name config-service yong7317/config-service:1.0
+```
+![image](https://user-images.githubusercontent.com/31242766/203584646-82b73220-176a-4ea5-9053-6a2903edb6e2.png)
+
+![image](https://user-images.githubusercontent.com/31242766/203585002-c7d98b9c-2e25-4179-8579-846a6ea664c3.png)
+#### 도커 컨테이너 로그 확인
+```docker
+docker logs 컨테이너이름
+```
+![image](https://user-images.githubusercontent.com/31242766/203585555-fdbdf6a3-4dbd-4827-a236-1181a3bc2331.png)
 
 ## 참고
 http://forward.nhnent.com/hands-on-labs/java.spring-boot-actuator/04-endpoint.html      
